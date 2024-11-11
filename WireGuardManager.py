@@ -29,13 +29,13 @@ class WireGuardManager:
 
     def run_command(self, command):
         """
-        Utility function to run a command using subprocess.
+        Utility function to run a command using subprocess with bash.
         """
         try:
-            result = subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            result = subprocess.run(["/bin/bash", "-c", command], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             return result.stdout.decode().strip()
         except subprocess.CalledProcessError as e:
-            print(f"Command failed: {e.stderr.decode().strip()}")
+            print(f"Command '{command}' failed: {e.stderr.decode().strip()}")
             return None
 
     def _load_peers(self):
