@@ -16,6 +16,8 @@ SERVER_IP = os.getenv('SERVER_IP', 'your.server.ip.address')  # Server IP addres
 USED_PORTS = set()
 USED_IPS = set()
 DEFAULT_PORT_RANGE = (8000, 9000)  # Default range for external ports
+PRIVATE_KEY_FILE = "/etc/wireguard/server_private.key"
+PUBLIC_KEY_FILE = "/etc/wireguard/server_public.key"
 
 class WireGuardManager:
     def __init__(self, port_range=DEFAULT_PORT_RANGE):
@@ -60,6 +62,16 @@ class WireGuardManager:
             USED_PORTS.add(peer['external_port'])
             USED_IPS.add(peer['peer_ip'])
 
+    def load_key_pair(self):
+        """
+        Loads a WireGuard key pair from the specified files.
+        """
+        with open(PRIVATE_KEY_FILE, 'r') as f:
+            private_key = f.read().strip()
+        with open(PUBLIC_KEY_FILE, 'r') as f:
+            public_key = f.read().strip()
+        return private_key, public_key
+
     def generate_key_pair(self):
         """
         Generates a WireGuard key pair (private and public key).
@@ -96,7 +108,7 @@ class WireGuardManager:
         """
         external_port = self._get_available_external_port()
 
-        private_key, public_key = self.generate_key_pair()
+        private_key, public_key = self.load_key_pair()
         peer_name = f"Peer_{internal_port}_{external_port}"
         peer_ip = self._generate_peer_ip()
         allowed_ips = f"{peer_ip}/32"
