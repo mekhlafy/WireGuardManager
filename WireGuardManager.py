@@ -140,8 +140,8 @@ class WireGuardManager:
         Adds forwarding rules to iptables restricted to the WireGuard peer IP.
         This includes rules for both incoming and outgoing traffic to allow bidirectional forwarding.
         """
-        # Forward incoming traffic from the peer IP and internal port to the external port
-        command_incoming = (f"iptables -t nat -A PREROUTING -s {peer_ip} -i {WG_INTERFACE} -p tcp --dport {internal_port} -j REDIRECT --to-port {external_port}")
+        # Forward incoming traffic from any source to the external port
+        command_incoming = (f"iptables -t nat -A PREROUTING -p tcp --dport {external_port} -j DNAT --to-destination {peer_ip}:{internal_port}")
         self.run_command(command_incoming)
 
         # Forward outgoing traffic from the external port back to the peer IP and internal port
