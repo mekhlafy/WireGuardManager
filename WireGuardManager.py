@@ -230,11 +230,11 @@ class WireGuardManager:
         client_config = (f"[Interface]\n"
                          f"PrivateKey = {private_key}\n"
                          f"Address = {peer_ip}/32\n"
-                         f"DNS = 1.1.1.1\n\n"
+                         f"DNS = 1.1.1.1\n\n" # Cloudflare DNS or we can use Google DNS which is 8.8.8.8 or our own DNS if we have more control over client connection
                          f"[Peer]\n"
                          f"PublicKey = {self._get_server_public_key()}\n"
                          f"Endpoint = {SERVER_IP}:51820\n"
-                         f"AllowedIPs = 0.0.0.0/0\n")
+                         f"AllowedIPs = {SERVER_IP}/32\n")
         client_config_file = os.path.join(CLIENT_CONFIG_DIR, f"{peer_name}.conf")
         with open(client_config_file, 'w') as f:
             f.write(client_config)
